@@ -10,7 +10,6 @@ var ErrInvalidString = errors.New("invalid string")
 
 func Unpack(input string) (string, error) {
 	char := ""
-
 	sb := strings.Builder{}
 
 	for _, ch := range input {
@@ -19,7 +18,6 @@ func Unpack(input string) (string, error) {
 		if len(char) == 0 && err == nil {
 			return "", ErrInvalidString
 		}
-
 		// нашли число после символа
 		if len(char) != 0 && err == nil {
 			for i := 0; i < dig; i++ {
@@ -28,23 +26,19 @@ func Unpack(input string) (string, error) {
 			char = ""
 			continue
 		}
-
 		// одинокий символ без числа
 		if len(char) != 0 && err != nil {
 			sb.WriteString(char)
 			char = ""
 		}
-
 		// нашли символ, но пока не нашли число
 		if len(char) == 0 && err != nil {
 			char = string(ch)
 		}
 	}
-
 	// одинокий символ без числа в конце
 	if char != "" {
 		sb.WriteString(char)
 	}
-
 	return sb.String(), nil
 }
