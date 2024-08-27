@@ -11,10 +11,10 @@ var ErrInvalidString = errors.New("invalid string")
 func Unpack(input string) (string, error) {
 	char := ""
 	sb := strings.Builder{}
-
 	for _, ch := range input {
+		symbol := string(ch)
 		// проверяем, число это или нет
-		dig, err := strconv.Atoi(string(ch))
+		dig, err := strconv.Atoi(symbol)
 		if len(char) == 0 && err == nil {
 			return "", ErrInvalidString
 		}
@@ -33,7 +33,7 @@ func Unpack(input string) (string, error) {
 		}
 		// нашли символ, но пока не нашли число
 		if len(char) == 0 && err != nil {
-			char = string(ch)
+			char = symbol
 		}
 	}
 	// одинокий символ без числа в конце
