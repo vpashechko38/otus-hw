@@ -1,5 +1,9 @@
 package hw04lrucache
 
+import (
+	"fmt"
+)
+
 type List interface {
 	Len() int
 	Front() *ListItem
@@ -8,22 +12,24 @@ type List interface {
 	PushBack(v interface{}) *ListItem
 	Remove(i *ListItem)
 	MoveToFront(i *ListItem)
+	Print() string
 }
 
-type ListItem struct {
-	Value interface{}
-	Next  *ListItem
-	Prev  *ListItem
-}
+type (
+	ListItem struct {
+		Value interface{}
+		Next  *ListItem
+		Prev  *ListItem
+	}
 
-var (
-	head   *ListItem = nil
-	back   *ListItem = nil
-	length int       = 0
+	list struct{}
 )
 
-type list struct {
-}
+var (
+	head   *ListItem
+	back   *ListItem
+	length int
+)
 
 func NewList() List {
 	return list{}
@@ -33,12 +39,10 @@ func (l list) Len() int {
 	return length
 }
 
-// Front Получить первый элемент списка
 func (l list) Front() *ListItem {
 	return head
 }
 
-// Back Получить последний элемент списка
 func (l list) Back() *ListItem {
 	return back
 }
@@ -80,8 +84,13 @@ func (l list) Remove(i *ListItem) {
 
 	length--
 
-	i.Prev.Next = i.Next
-	i.Next.Prev = i.Prev
+	if i.Prev != nil {
+		i.Prev.Next = i.Next
+	}
+
+	if i.Next != nil {
+		i.Next.Prev = i.Prev
+	}
 
 	i.Next = nil
 	i.Prev = nil
@@ -100,6 +109,8 @@ func (l list) MoveToFront(i *ListItem) {
 
 	if i.Next != nil {
 		i.Next.Prev = i.Prev
+	} else {
+		back = i.Prev
 	}
 
 	head.Prev = i
@@ -123,4 +134,16 @@ func (l list) MoveToBack(i *ListItem) {
 
 	back = i
 	back.Next = nil
+}
+
+func (l list) Print() string {
+	r := ""
+	h := head
+	for {
+		r += fmt.Sprintf("%v ", h.Value.(*Item).Value)
+		if h.Next == nil {
+			return r
+		}
+		h = h.Next
+	}
 }

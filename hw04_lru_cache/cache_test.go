@@ -49,14 +49,105 @@ func TestCache(t *testing.T) {
 		require.Nil(t, val)
 	})
 
-	t.Run("purge logic", func(t *testing.T) {
-		// Write me
+	t.Run("clear", func(t *testing.T) {
+		c := NewCache(3)
+
+		wasInCache := c.Set("aaa", 100)
+		require.False(t, wasInCache)
+
+		wasInCache = c.Set("bbb", 200)
+		require.False(t, wasInCache)
+
+		val, ok := c.Get("aaa")
+		require.True(t, ok)
+		require.Equal(t, 100, val)
+
+		val, ok = c.Get("bbb")
+		require.True(t, ok)
+		require.Equal(t, 200, val)
+
+		wasInCache = c.Set("aaa", 300)
+		require.True(t, wasInCache)
+
+		val, ok = c.Get("aaa")
+		require.True(t, ok)
+		require.Equal(t, 300, val)
+
+		val, ok = c.Get("ccc")
+		require.False(t, ok)
+		require.Nil(t, val)
+
+		val, ok = c.Get("aaa")
+		require.True(t, ok)
+		require.Equal(t, 300, val)
+
+		c.Clear()
+
+		val, ok = c.Get("aaa")
+		require.False(t, ok)
+		require.Nil(t, val)
+	})
+
+	t.Run("purge size", func(t *testing.T) {
+		c := NewCache(3)
+
+		wasInCache := c.Set("aaa", 100)
+		require.False(t, wasInCache)
+		require.Equal(t, "100 ", c.Print())
+
+		wasInCache = c.Set("bbb", 200)
+		require.False(t, wasInCache)
+		require.Equal(t, "200 100 ", c.Print())
+
+		wasInCache = c.Set("ccc", 300)
+		require.False(t, wasInCache)
+		require.Equal(t, "300 200 100 ", c.Print())
+
+		// добавили ddd сверх капасити
+		wasInCache = c.Set("ddd", 400)
+		require.False(t, wasInCache)
+		require.Equal(t, "400 300 200 ", c.Print())
+
+		// aaa был вытеснен
+		val, ok := c.Get("aaa")
+		require.False(t, ok)
+		require.Nil(t, val)
+	})
+
+	t.Run("purge old", func(t *testing.T) {
+		c := NewCache(3)
+
+		wasInCache := c.Set("aaa", 100)
+		require.False(t, wasInCache)
+		require.Equal(t, "100 ", c.Print())
+
+		wasInCache = c.Set("bbb", 200)
+		require.False(t, wasInCache)
+		require.Equal(t, "200 100 ", c.Print())
+
+		wasInCache = c.Set("ccc", 300)
+		require.False(t, wasInCache)
+		require.Equal(t, "300 200 100 ", c.Print())
+
+		// запрашиваем ааа и поднимаем его в списке
+		val, ok := c.Get("aaa")
+		require.True(t, ok)
+		require.NotNil(t, val)
+		require.Equal(t, "100 300 200 ", c.Print())
+
+		// добавили ddd сверх капасити
+		wasInCache = c.Set("ddd", 400)
+		require.False(t, wasInCache)
+		require.Equal(t, "400 100 300 ", c.Print())
+
+		// bbb был вытеснен
+		val, ok = c.Get("bbb")
+		require.False(t, ok)
+		require.Nil(t, val)
 	})
 }
 
-func TestCacheMultithreading(t *testing.T) {
-	t.Skip() // Remove me if task with asterisk completed.
-
+func TestCacheMultithreading(_ *testing.T) {
 	c := NewCache(10)
 	wg := &sync.WaitGroup{}
 	wg.Add(2)
