@@ -79,4 +79,18 @@ func TestTop10(t *testing.T) {
 			require.Equal(t, expected, Top10(text))
 		}
 	})
+
+	t.Run("single word", func(t *testing.T) {
+		singleWord := "мамамылараму"
+		expected := []string{
+			singleWord, // 1
+		}
+		require.Equal(t, expected, Top10(singleWord))
+	})
+
+	t.Run("only space", func(t *testing.T) {
+		singleWord := " "
+		expected := []string{} // empty
+		require.Equal(t, expected, Top10(singleWord))
+	})
 }
