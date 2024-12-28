@@ -3,18 +3,41 @@ package hw03frequencyanalysis
 import (
 	"regexp"
 	"sort"
-
-	"github.com/samber/lo"
 )
 
 var reg = "\\s+"
 
-type elem struct {
+type wordInfo struct {
 	word  string
 	count int
 }
 
 func Top10(input string) []string {
+	infos := calculateWords(input)
+
+	sort.Slice(infos, func(i, j int) bool {
+		if infos[i].count == infos[j].count {
+			return infos[i].word < infos[j].word
+		}
+		return infos[i].count > infos[j].count
+	})
+
+	return getTop10Words(infos)
+}
+
+func getTop10Words(wordInfos []wordInfo) []string {
+	result := make([]string, 0)
+	for _, word := range wordInfos {
+		result = append(result, word.word)
+	}
+
+	if len(result) >= 10 {
+		return result[:10]
+	}
+	return result
+}
+
+func calculateWords(input string) []wordInfo {
 	re := regexp.MustCompile(reg)
 	words := re.Split(input, -1)
 	dict := make(map[string]int)
@@ -26,23 +49,10 @@ func Top10(input string) []string {
 		dict[word]++
 	}
 
-	elems := make([]elem, 0)
+	elems := make([]wordInfo, 0)
 	for word, count := range dict {
-		elems = append(elems, elem{word, count})
+		elems = append(elems, wordInfo{word, count})
 	}
 
-	sort.Slice(elems, func(i, j int) bool {
-		if elems[i].count == elems[j].count {
-			return elems[i].word < elems[j].word
-		}
-		return elems[i].count > elems[j].count
-	})
-
-	top := lo.Map(elems, func(item elem, _ int) string {
-		return item.word
-	})
-	if len(top) >= 10 {
-		return top[:10]
-	}
-	return top
+	return elems
 }
