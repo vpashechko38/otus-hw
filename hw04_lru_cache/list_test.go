@@ -76,4 +76,28 @@ func TestList(t *testing.T) {
 		require.Equal(t, 20, l.Front().Value)
 		require.Equal(t, 30, l.Back().Value)
 	})
+
+	t.Run("check remove head", func(t *testing.T) {
+		l := NewList()
+
+		l.PushFront(10)
+		l.PushFront(20)
+		l.PushFront(30)
+
+		l.Remove(l.Front())
+		require.Equal(t, 2, l.Len())
+		require.Equal(t, 20, l.Front().Value)
+	})
+
+	t.Run("check remove back", func(t *testing.T) {
+		l := NewList()
+
+		l.PushFront(10)
+		l.PushFront(20)
+		l.PushFront(30)
+
+		l.Remove(l.Back())
+		require.Equal(t, 2, l.Len())
+		require.Equal(t, 20, l.Back().Value)
+	})
 }

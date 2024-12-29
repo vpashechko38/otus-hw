@@ -10,7 +10,6 @@ type Cache interface {
 	Set(key Key, value interface{}) bool
 	Get(key Key) (interface{}, bool)
 	Clear()
-	Print() string
 }
 
 type lruCache struct {
@@ -66,9 +65,8 @@ func (c *lruCache) Set(key Key, value interface{}) bool {
 }
 
 func (c *lruCache) Get(key Key) (interface{}, bool) {
-	c.mutex.RLock()
-
-	defer c.mutex.RUnlock()
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
 
 	if item, ok := c.items[key]; ok {
 		c.queue.MoveToFront(item)
@@ -84,8 +82,4 @@ func (c *lruCache) Clear() {
 
 	c.items = make(map[Key]*ListItem, c.capacity)
 	c.queue = NewList()
-}
-
-func (c *lruCache) Print() string {
-	return c.queue.Print()
 }

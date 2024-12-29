@@ -93,20 +93,16 @@ func TestCache(t *testing.T) {
 
 		wasInCache := c.Set("aaa", 100)
 		require.False(t, wasInCache)
-		require.Equal(t, "100 ", c.Print())
 
 		wasInCache = c.Set("bbb", 200)
 		require.False(t, wasInCache)
-		require.Equal(t, "200 100 ", c.Print())
 
 		wasInCache = c.Set("ccc", 300)
 		require.False(t, wasInCache)
-		require.Equal(t, "300 200 100 ", c.Print())
 
 		// добавили ddd сверх капасити
 		wasInCache = c.Set("ddd", 400)
 		require.False(t, wasInCache)
-		require.Equal(t, "400 300 200 ", c.Print())
 
 		// aaa был вытеснен
 		val, ok := c.Get("aaa")
@@ -119,26 +115,21 @@ func TestCache(t *testing.T) {
 
 		wasInCache := c.Set("aaa", 100)
 		require.False(t, wasInCache)
-		require.Equal(t, "100 ", c.Print())
 
 		wasInCache = c.Set("bbb", 200)
 		require.False(t, wasInCache)
-		require.Equal(t, "200 100 ", c.Print())
 
 		wasInCache = c.Set("ccc", 300)
 		require.False(t, wasInCache)
-		require.Equal(t, "300 200 100 ", c.Print())
 
 		// запрашиваем ааа и поднимаем его в списке
 		val, ok := c.Get("aaa")
 		require.True(t, ok)
 		require.NotNil(t, val)
-		require.Equal(t, "100 300 200 ", c.Print())
 
 		// добавили ddd сверх капасити
 		wasInCache = c.Set("ddd", 400)
 		require.False(t, wasInCache)
-		require.Equal(t, "400 100 300 ", c.Print())
 
 		// bbb был вытеснен
 		val, ok = c.Get("bbb")
