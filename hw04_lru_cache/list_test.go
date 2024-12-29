@@ -22,6 +22,7 @@ func TestList(t *testing.T) {
 		l.PushBack(20)  // [10, 20]
 		l.PushBack(30)  // [10, 20, 30]
 		require.Equal(t, 3, l.Len())
+		require.Equal(t, 30, l.Back().Value)
 
 		middle := l.Front().Next // 20
 		l.Remove(middle)         // [10, 30]
@@ -47,5 +48,67 @@ func TestList(t *testing.T) {
 			elems = append(elems, i.Value.(int))
 		}
 		require.Equal(t, []int{70, 80, 60, 40, 10, 30, 50}, elems)
+	})
+
+	t.Run("complex second", func(t *testing.T) {
+		l := NewList()
+
+		l.PushFront(10) // [10]
+		l.PushFront(20) // [20, 10]
+		l.PushFront(30) // [30, 20, 10]
+		require.Equal(t, 3, l.Len())
+		require.Equal(t, 10, l.Back().Value)
+		require.Equal(t, 30, l.Front().Value)
+
+		l.MoveToFront(l.Front()) // [30, 20, 10]
+		l.MoveToFront(l.Back())  // [10, 30, 20]
+		require.Equal(t, 10, l.Front().Value)
+		require.Equal(t, 20, l.Back().Value)
+
+		l.PushFront(400) // [40, 10, 30, 20]
+		l.PushFront(50)  // [50, 40, 10, 30, 20]
+		l.PushFront(60)  // [60, 50, 40, 10, 30, 20]
+		require.Equal(t, 60, l.Front().Value)
+		require.Equal(t, 20, l.Back().Value)
+
+		l.MoveToFront(l.Front()) // [60, 50, 40, 10, 30, 20]
+		l.MoveToFront(l.Back())  // [20, 60, 50, 40, 10, 30]
+		require.Equal(t, 20, l.Front().Value)
+		require.Equal(t, 30, l.Back().Value)
+	})
+
+	t.Run("check remove head", func(t *testing.T) {
+		l := NewList()
+
+		l.PushFront(10)
+		l.PushFront(20)
+		l.PushFront(30)
+
+		l.Remove(l.Front())
+		require.Equal(t, 2, l.Len())
+		require.Equal(t, 20, l.Front().Value)
+	})
+
+	t.Run("check remove back", func(t *testing.T) {
+		l := NewList()
+
+		l.PushFront(10)
+		l.PushFront(20)
+		l.PushFront(30)
+
+		l.Remove(l.Back())
+		require.Equal(t, 2, l.Len())
+		require.Equal(t, 20, l.Back().Value)
+	})
+
+	t.Run("check remove single", func(t *testing.T) {
+		l := NewList()
+
+		l.PushFront(10)
+
+		l.Remove(l.Back())
+		require.Equal(t, 0, l.Len())
+		require.Nil(t, l.Back())
+		require.Nil(t, l.Front())
 	})
 }
