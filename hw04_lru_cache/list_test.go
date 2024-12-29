@@ -100,4 +100,15 @@ func TestList(t *testing.T) {
 		require.Equal(t, 2, l.Len())
 		require.Equal(t, 20, l.Back().Value)
 	})
+
+	t.Run("check remove single", func(t *testing.T) {
+		l := NewList()
+
+		l.PushFront(10)
+
+		l.Remove(l.Back())
+		require.Equal(t, 0, l.Len())
+		require.Nil(t, l.Back())
+		require.Nil(t, l.Front())
+	})
 }

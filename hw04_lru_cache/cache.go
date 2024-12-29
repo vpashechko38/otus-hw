@@ -17,7 +17,7 @@ type lruCache struct {
 	queue    List
 	items    map[Key]*ListItem
 
-	mutex sync.RWMutex
+	mutex sync.Mutex
 }
 
 type Item struct {
@@ -31,7 +31,7 @@ func NewCache(capacity int) Cache {
 		queue:    NewList(),
 		items:    make(map[Key]*ListItem, capacity),
 
-		mutex: sync.RWMutex{},
+		mutex: sync.Mutex{},
 	}
 }
 
